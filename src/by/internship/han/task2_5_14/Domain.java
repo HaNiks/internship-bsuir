@@ -3,17 +3,15 @@ package by.internship.han.task2_5_14;
 import java.util.*;
 import java.util.stream.IntStream;
 
-public class Domain implements StringComparator {
+public class Domain {
 
-    @Override
-    public List<String> compareTo() {
-        List<String> domains = new ArrayList<>();
-        getListDomains().forEach(s -> domains.add(reverseDomain(s)));
-        Collections.sort(domains);
-        return domains;
+    private String address;
+
+    private int compareTo(Domain domain) {
+        return this.address.compareTo(domain.address);
     }
 
-    public String reverseDomain(String s) {
+    private String reverseDomain(String s) {
         String[] arr = s.split("\\.");
         IntStream.range(0, arr.length / 2).forEach(i -> {
             String tmp = arr[i];
@@ -23,7 +21,7 @@ public class Domain implements StringComparator {
         return convertToString(arr);
     }
 
-    public String convertToString(String[] arr) {
+    private String convertToString(String[] arr) {
         StringBuilder stringBuilder = new StringBuilder();
         IntStream.range(0, arr.length).forEach(i -> {
             stringBuilder.append(arr[i]);
@@ -32,20 +30,28 @@ public class Domain implements StringComparator {
         return stringBuilder.toString();
     }
 
-    public List<String> getListDomains() {
+    private List<Domain> getListDomains() {
         Scanner scanner = new Scanner(System.in);
-        List<String> domains = new ArrayList<>();
+        List<Domain> domains = new ArrayList<>();
         System.out.println("Введите имя домена. Для выхода введите '/'");
-        String domain = "";
-        while (!domain.equals("/")) {
-            domain = scanner.nextLine();
-            if (!domain.equals("/")) domains.add(domain);
+        String s = scanner.nextLine();
+        while (!s.equals("/")) {
+            Domain domain = new Domain();
+            domain.address = reverseDomain(s);
+            domains.add(domain);
+            s = scanner.nextLine();
         }
         return domains;
     }
 
-    public static void main(String[] args) {
-        Domain domain = new Domain();
-        domain.compareTo().forEach(System.out::println);
+    public List<Domain> getSortedDomains() {
+        List<Domain> domains = getListDomains();
+        domains.sort(Domain::compareTo);
+        return domains;
+    }
+
+    @Override
+    public String toString() {
+        return address;
     }
 }
