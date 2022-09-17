@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-public class Deque<Item> implements Iterable<Item>, StandardOperations {
+public class Deque<Item> implements Iterable<Item>, DequeOperations {
 
     private Node first;
     private Node last;
@@ -54,6 +54,7 @@ public class Deque<Item> implements Iterable<Item>, StandardOperations {
     public Item popRight() {
         Item item = last.item;
         last = last.previous;
+        last.next = null;
         count--;
         return item;
     }
@@ -113,18 +114,19 @@ public class Deque<Item> implements Iterable<Item>, StandardOperations {
 
     public static void main(String[] args) {
 
-        Deque<String> deque = new Deque<>();
+        Deque<Integer> deque = new Deque<>();
         System.out.println("Пуст ли дэк? " + deque.isEmpty());
 
-        deque.pushLeft("left push");
-        deque.pushRight("right push");
-        deque.pushLeft("left push");
+        deque.pushLeft(5);
+        deque.pushRight(3);
+        deque.pushRight(8);
+        deque.pushLeft(11);
 
         System.out.println("Очередь: ");
         deque.forEach(System.out::println);
 
-        String deleteRight = deque.popRight();
-        String deleteLeft = deque.popLeft();
+        Integer deleteRight = deque.popRight();
+        Integer deleteLeft = deque.popLeft();
 
         System.out.println("Очередь после преобразований: ");
         deque.forEach(System.out::println);
