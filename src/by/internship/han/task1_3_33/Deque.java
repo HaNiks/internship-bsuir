@@ -4,22 +4,23 @@ import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-public class Deque<Item> implements Iterable<Item>, StandardOperations {
+public class Deque<T> implements Iterable<T>, DequeOperations<T> {
 
     private Node first;
     private Node last;
     private int count;
 
     private class Node {
-        Item item;
+        T t;
         Node next;
         Node previous;
     }
 
-    public void pushLeft(Item item) {
+    @Override
+    public void pushLeft(T t) {
         Node oldFirst = first;
         first = new Node();
-        first.item = item;
+        first.t = t;
         first.next = oldFirst;
         first.previous = null;
         if (isEmpty()) {
@@ -30,10 +31,11 @@ public class Deque<Item> implements Iterable<Item>, StandardOperations {
         count++;
     }
 
-    public void pushRight(Item item) {
+    @Override
+    public void pushRight(T t) {
         Node oldLast = last;
         last = new Node();
-        last.item = item;
+        last.t = t;
         last.next = null;
         last.previous = oldLast;
         if (isEmpty()) {
@@ -44,18 +46,21 @@ public class Deque<Item> implements Iterable<Item>, StandardOperations {
         count++;
     }
 
-    public Item popLeft() {
-        Item item = first.item;
+    @Override
+    public T popLeft() {
+        T t = first.t;
         first = first.next;
         count--;
-        return item;
+        return t;
     }
 
-    public Item popRight() {
-        Item item = last.item;
+    @Override
+    public T popRight() {
+        T t = last.t;
         last = last.previous;
+        last.next = null;
         count--;
-        return item;
+        return t;
     }
 
 
@@ -70,21 +75,21 @@ public class Deque<Item> implements Iterable<Item>, StandardOperations {
     }
 
     @Override
-    public Iterator<Item> iterator() {
+    public Iterator<T> iterator() {
         return new DequeIterator();
     }
 
     @Override
-    public void forEach(Consumer<? super Item> action) {
+    public void forEach(Consumer<? super T> action) {
         Iterable.super.forEach(action);
     }
 
     @Override
-    public Spliterator<Item> spliterator() {
+    public Spliterator<T> spliterator() {
         return Iterable.super.spliterator();
     }
 
-    private class DequeIterator implements Iterator<Item> {
+    private class DequeIterator implements Iterator<T> {
 
         private Node current = first;
 
@@ -94,10 +99,10 @@ public class Deque<Item> implements Iterable<Item>, StandardOperations {
         }
 
         @Override
-        public Item next() {
-            Item item = current.item;
+        public T next() {
+            T t = current.t;
             current = current.next;
-            return item;
+            return t;
         }
 
         @Override
@@ -106,25 +111,26 @@ public class Deque<Item> implements Iterable<Item>, StandardOperations {
         }
 
         @Override
-        public void forEachRemaining(Consumer<? super Item> action) {
+        public void forEachRemaining(Consumer<? super T> action) {
             Iterator.super.forEachRemaining(action);
         }
     }
 
     public static void main(String[] args) {
 
-        Deque<String> deque = new Deque<>();
+        Deque<Integer> deque = new Deque<>();
         System.out.println("Пуст ли дэк? " + deque.isEmpty());
 
-        deque.pushLeft("left push");
-        deque.pushRight("right push");
-        deque.pushLeft("left push");
+        deque.pushLeft(5);
+        deque.pushRight(3);
+        deque.pushRight(8);
+        deque.pushLeft(11);
 
         System.out.println("Очередь: ");
         deque.forEach(System.out::println);
 
-        String deleteRight = deque.popRight();
-        String deleteLeft = deque.popLeft();
+        Integer deleteRight = deque.popRight();
+        Integer deleteLeft = deque.popLeft();
 
         System.out.println("Очередь после преобразований: ");
         deque.forEach(System.out::println);

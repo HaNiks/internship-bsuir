@@ -4,11 +4,11 @@ import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-public class ResizingArrayDeque<T> implements Iterable<T>, StandardOperations {
-    private Object[] elements;
+public class ResizingArrayDeque<T> implements Iterable<T>, DequeOperations<T> {
+    private T[] elements;
 
     public ResizingArrayDeque() {
-        elements = new Object[0];
+        elements = (T[]) new Object[0];
     }
 
     @Override
@@ -39,46 +39,48 @@ public class ResizingArrayDeque<T> implements Iterable<T>, StandardOperations {
         }
     }
 
-    public Object popLeft() {
-        if (elements != null) {
-            Object item = elements[0];
+    public T popLeft() {
+        try {
+            T t = elements[0];
             elements[0] = null;
             elements = trimToSize();
-            return item;
+            return t;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
+            throw new ArrayIndexOutOfBoundsException("Пустой массив");
         }
-        return null;
     }
 
-    public Object popRight() {
-        if (elements != null) {
-            Object item = elements[elements.length - 1];
+    public T popRight() {
+        try {
+            T t = elements[elements.length - 1];
             elements[elements.length - 1] = null;
             elements = trimToSize();
-            return item;
+            return t;
+        } catch (ArrayIndexOutOfBoundsException e) {
+            e.printStackTrace();
+            throw new ArrayIndexOutOfBoundsException("Пустой массив");
         }
-        return null;
     }
 
-    private Object[] trimToSize() {
+    private T[] trimToSize() {
         int n = 0;
-        for (Object element : elements) {
-            if (element != null) {
+        int copyFrom = 0;
+        if (elements[0] == null) {
+            copyFrom = 1;
+        }
+        for (int i = 0; i < elements.length; i++) {
+            if (elements[i] != null) {
                 n++;
             }
         }
-        Object[] arr = new Object[n];
-        for (Object element : elements) {
-            for (int i = 0; i < arr.length; i++) {
-                if (element != null) {
-                    arr[i] = element;
-                }
-            }
-        }
+        T[] arr = (T[]) new Object[n];
+        System.arraycopy(elements, copyFrom, arr, 0, arr.length);
         return arr;
     }
 
-    private Object[] getNewArr(Object[] elements, int shiftNumber) {
-        Object[] objects = new Object[elements.length + 1];
+    private T[] getNewArr(Object[] elements, int shiftNumber) {
+        T[] objects = (T[]) new Object[elements.length + 1];
         System.arraycopy(elements, 0, objects, shiftNumber, elements.length);
         return objects;
     }
@@ -99,7 +101,7 @@ public class ResizingArrayDeque<T> implements Iterable<T>, StandardOperations {
 
         @Override
         public T next() {
-            return (T) String.valueOf(elements[i++]);
+            return elements[i++];
         }
     }
 
@@ -113,15 +115,16 @@ public class ResizingArrayDeque<T> implements Iterable<T>, StandardOperations {
         return Iterable.super.spliterator();
     }
 
-
     public static void main(String[] args) {
-        ResizingArrayDeque<String> deque = new ResizingArrayDeque<>();
+        ResizingArrayDeque<Integer> deque = new ResizingArrayDeque<>();
 
         System.out.println("Пуст ли дэк? " + deque.isEmpty());
 
-        deque.pushLeft("left push");
-        deque.pushRight("right push");
-        deque.pushLeft("left push");
+        deque.pushLeft(1);
+        deque.pushRight(2);
+        deque.pushLeft(3);
+        deque.pushLeft(4);
+        deque.pushRight(5);
 
         System.out.println("Очередь: ");
         deque.forEach(System.out::println);
