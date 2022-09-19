@@ -1,8 +1,6 @@
 package by.internship.han.task1_3_33;
 
 import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
 public class ResizingArrayDeque<T> implements Iterable<T>, DequeOperations<T> {
     private T[] elements;
@@ -64,18 +62,12 @@ public class ResizingArrayDeque<T> implements Iterable<T>, DequeOperations<T> {
     }
 
     private T[] trimToSize() {
-        int n = 0;
-        int copyFrom = 0;
+        T[] arr = (T[]) new Object[elements.length - 1];
         if (elements[0] == null) {
-            copyFrom = 1;
+            System.arraycopy(elements, 1, arr, 0, arr.length);
+        } else {
+            System.arraycopy(elements, 0, arr, 0, arr.length);
         }
-        for (int i = 0; i < elements.length; i++) {
-            if (elements[i] != null) {
-                n++;
-            }
-        }
-        T[] arr = (T[]) new Object[n];
-        System.arraycopy(elements, copyFrom, arr, 0, arr.length);
         return arr;
     }
 
@@ -105,26 +97,19 @@ public class ResizingArrayDeque<T> implements Iterable<T>, DequeOperations<T> {
         }
     }
 
-    @Override
-    public void forEach(Consumer<? super T> action) {
-        Iterable.super.forEach(action);
-    }
-
-    @Override
-    public Spliterator<T> spliterator() {
-        return Iterable.super.spliterator();
-    }
-
     public static void main(String[] args) {
         ResizingArrayDeque<Integer> deque = new ResizingArrayDeque<>();
 
         System.out.println("Пуст ли дэк? " + deque.isEmpty());
 
+        deque.pushLeft(22);
         deque.pushLeft(1);
         deque.pushRight(2);
         deque.pushLeft(3);
         deque.pushLeft(4);
+        deque.pushLeft(4);
         deque.pushRight(5);
+        deque.pushRight(11);
 
         System.out.println("Очередь: ");
         deque.forEach(System.out::println);

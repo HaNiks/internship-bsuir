@@ -1,8 +1,6 @@
 package by.internship.han.task1_3_33;
 
 import java.util.Iterator;
-import java.util.Spliterator;
-import java.util.function.Consumer;
 
 public class Deque<T> implements Iterable<T>, DequeOperations<T> {
 
@@ -22,7 +20,6 @@ public class Deque<T> implements Iterable<T>, DequeOperations<T> {
         first = new Node();
         first.t = t;
         first.next = oldFirst;
-        first.previous = null;
         if (isEmpty()) {
             last = first;
         } else {
@@ -36,7 +33,6 @@ public class Deque<T> implements Iterable<T>, DequeOperations<T> {
         Node oldLast = last;
         last = new Node();
         last.t = t;
-        last.next = null;
         last.previous = oldLast;
         if (isEmpty()) {
             first = last;
@@ -50,6 +46,7 @@ public class Deque<T> implements Iterable<T>, DequeOperations<T> {
     public T popLeft() {
         T t = first.t;
         first = first.next;
+        first.previous = null;
         count--;
         return t;
     }
@@ -79,16 +76,6 @@ public class Deque<T> implements Iterable<T>, DequeOperations<T> {
         return new DequeIterator();
     }
 
-    @Override
-    public void forEach(Consumer<? super T> action) {
-        Iterable.super.forEach(action);
-    }
-
-    @Override
-    public Spliterator<T> spliterator() {
-        return Iterable.super.spliterator();
-    }
-
     private class DequeIterator implements Iterator<T> {
 
         private Node current = first;
@@ -103,16 +90,6 @@ public class Deque<T> implements Iterable<T>, DequeOperations<T> {
             T t = current.t;
             current = current.next;
             return t;
-        }
-
-        @Override
-        public void remove() {
-            Iterator.super.remove();
-        }
-
-        @Override
-        public void forEachRemaining(Consumer<? super T> action) {
-            Iterator.super.forEachRemaining(action);
         }
     }
 
